@@ -13,16 +13,18 @@ import {
   TouchableOpacity, SafeAreaView
 } from 'react-native';
 import CheckBox from 'react-native-check-box';
-import { db } from './config'
+import * as firebase from 'firebase'
 import { Header } from 'react-native-elements'
 import { Input } from 'react-native-elements'
 import { Button } from 'react-native-elements';
 import { Icon } from 'react-native-elements'
 import { Divider } from 'react-native-elements';
-import * as firebase from 'firebase'
 import SignOut from './signOut'
 
+const uuid = require("uuid");
+
 class Tasks extends React.Component {
+  
   constructor() {
     super();
     this.state = {
@@ -37,7 +39,15 @@ class Tasks extends React.Component {
   }
 
   componentDidMount() {
-    db.ref('/todos').on('value', querySnapShot => {
+    const todoId = uuid();
+    const user = firebase.auth().currentUser
+    var uid;
+
+    if (user !=  null ){
+      uid = user.uid
+    }
+
+    firebase.database().ref(`/todos/${uid}`).on('value', querySnapShot => {
       let data = querySnapShot.val() ? querySnapShot.val() : {};
 
       let todoItems = { ...data };
@@ -50,9 +60,19 @@ class Tasks extends React.Component {
 
 
   addNewTodo() {
-    db.ref('/todos').push({
+    const todoId = uuid();
+    const user = firebase.auth().currentUser
+    var uid;
+
+    if (user !=  null ){
+      uid = user.uid
+    }
+    firebase.database().ref('/todos/' + uid).push({
       done: false,
       todoItem: this.state.presentToDo,
+      todoId: uid,
+      userId: uid
+      
     });
     Alert.alert('Action!', 'A new To-do item was created');
     this.setState({
@@ -61,32 +81,24 @@ class Tasks extends React.Component {
   }
 
   clearTodos() {
-    db.ref('/todos').remove();
+    firebase.database().ref('/todos').remove();
   }
 
   render() {
     let todosKeys = Object.keys(this.state.todos);
 
     return (
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : null}
-        style={{ flex: 1 }}
-
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+     
+     
           <View
             style={styles.container}
             contentContainerStyle={styles.contentContainerStyle}>
-
             < View >
               <SignOut />
               <ScrollView>
-
                 {todosKeys.length > 0 ? (
                   todosKeys.map(key => (
                     <ToDoItem
-
                       key={key}
                       id={key}
                       todoItem={this.state.todos[key]}
@@ -100,9 +112,14 @@ class Tasks extends React.Component {
                   )}
               </ScrollView>
             </View >
-            <View style={{ marginTop: 20 }}>
+            <View style={{ marginTop: 10}}>
             </View>
-
+            <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        style={{ flex: 1 }}
+      >
+           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View
               style={{
                 flex: 1, flexDirection: 'row', justifyContent: 'flex-start', width: '95 %'
@@ -115,8 +132,9 @@ class Tasks extends React.Component {
                 <Input
                   placeholder="New Task"
                   placeholderTextColor="#969595"
+                  
                   value={this.state.presentToDo}
-                  style={{ fontSize: 20, color: 'yellow', marginRight: 50 }}
+                  style={{ fontSize: 20, color: 'white', marginRight: 50 }}
                   onChangeText={e => {
                     this.setState({
                       presentToDo: e,
@@ -133,10 +151,9 @@ class Tasks extends React.Component {
                 />
               </View>
             </View>
-          </View >
         </TouchableWithoutFeedback>
-
       </KeyboardAvoidingView>
+      </View >
 
     );
   }
@@ -147,7 +164,7 @@ const ToDoItem = ({ todoItem: { todoItem: name, done }, id }) => {
 
   const onCheck = () => {
     setDone(!doneState);
-    db.ref('/todos').update({
+    firebase.database().ref('/todos').update({
       [id]: {
         todoItem: name,
         done: !doneState,
@@ -155,8 +172,14 @@ const ToDoItem = ({ todoItem: { todoItem: name, done }, id }) => {
     });
   };
   const deleteTodo = () => {
+    const user = firebase.auth().currentUser
+    var uid;
+
+    if (user !=  null ){
+      uid = user.uid
+    }
     const itemId = id
-    db.ref(`/todos/${itemId}`).remove()
+    firebase.database().ref(`/todos/${uid}/${itemId}`).remove()
   };
 
   return (
@@ -182,9 +205,6 @@ const ToDoItem = ({ todoItem: { todoItem: name, done }, id }) => {
           type='font-awesome'
           color='yellow' />
       </View>
-
-
-
     </View>
 
   );

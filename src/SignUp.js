@@ -3,6 +3,9 @@ import React from 'react'
 import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity } from 'react-native'
 import * as firebase from 'firebase'
 
+
+const uuid = require("uuid");
+
 export default class SignUp extends React.Component {
 
   state = {
@@ -13,14 +16,16 @@ export default class SignUp extends React.Component {
   }
 
   handleSignUp = () => {
+    const userId = uuid();
     firebase
       .auth()
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .createUserWithEmailAndPassword(this.state.email, this.state.password,)
       .then(userCredentials => {
         return userCredentials.user.updateProfile({
           displayName: this.state.name
         })
       })
+  
       .catch(error => this.setState * { errorMessage: error.message })
   };
   render() {

@@ -1,6 +1,6 @@
 // Main.js
 import React from 'react'
-import { db } from './config';
+import * as  firebase from 'firebase'
 import { StyleSheet, Platform, Image, Text, View } from 'react-native'
 export default class Main extends React.Component {
   state = { currentUser: null }

@@ -1,9 +1,13 @@
 // Login.js
 import React from 'react'
-import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity, StatusBar, LayoutAnimation, Image } from 'react-native'
 import * as firebase from 'firebase'
 
 export default class Login extends React.Component {
+
+  static navigationOptions = {
+    header: null
+  };
 
   state = {
     email: '',
@@ -21,7 +25,16 @@ export default class Login extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.greeting}>{`Welcome Back Ricky`}</Text>
+        <StatusBar barStyle='light-content'></StatusBar>
+        <Image
+          source={require('../assets/bkg.png')}
+          style={{ marginTop: -280, marginLeft: -15, width: 500, height: 500 }}
+        ></Image>
+        <Image
+          source={require('../assets/authFooter.png')}
+          style={{ position: 'absolute', bottom: -575, right: -490 }}
+        ></Image>
+        <Text style={styles.greeting}>{`Welcome Back`}</Text>
         <View style={styles.errorMessage}>
           {this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
         </View>
@@ -30,7 +43,7 @@ export default class Login extends React.Component {
 
             <Text style={styles.inputTitle}>Email</Text>
             <TextInput
-              style={styles.textInput}
+              style={styles.input}
               autoCapitalize="none"
               onChangeText={email => this.setState({ email })}
               value={this.state.email}
@@ -40,7 +53,7 @@ export default class Login extends React.Component {
             <Text style={styles.inputTitle}>Password</Text>
             <TextInput
               secureTextEntry
-              style={styles.textInput}
+              style={styles.input}
               autoCapitalize="none"
               onChangeText={password => this.setState({ password })}
               value={this.state.password}

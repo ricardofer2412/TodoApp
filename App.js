@@ -41,15 +41,17 @@ if (!firebase.apps.length) {
 }
 
 
-
 const AppStack = createStackNavigator({
   Tasks: Tasks
 
 });
 
 const AuthStack = createStackNavigator({
+
   Login: Login,
-  SignUp: SignUp
+  SignUp: SignUp,
+
+
 });
 
 export default createAppContainer(

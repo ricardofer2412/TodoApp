@@ -13,6 +13,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import * as firebase from 'firebase'
+import { Icon } from 'react-native-elements'
 
 
 export default class SignOut extends React.Component {
@@ -25,9 +26,12 @@ export default class SignOut extends React.Component {
   render() {
     return (
       <View>
-        <TouchableOpacity style={{ marginTop: 32 }} onPress={this.signOutUser}>
-          <Text style={{ color: 'white' }}>SignOut</Text>
+        <TouchableOpacity style={{}} onPress={this.signOutUser}>
+          <Icon
 
+            name='sign-out'
+            type='font-awesome'
+            color='yellow' />
         </TouchableOpacity>
 
       </View>

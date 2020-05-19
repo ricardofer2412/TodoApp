@@ -21,10 +21,15 @@ import { Icon } from 'react-native-elements'
 import { Divider } from 'react-native-elements';
 import SignOut from './signOut'
 
+
 const uuid = require("uuid");
 
 class Tasks extends React.Component {
-  
+
+  static navigationOptions = {
+    header: null
+  };
+
   constructor() {
     super();
     this.state = {
@@ -43,7 +48,7 @@ class Tasks extends React.Component {
     const user = firebase.auth().currentUser
     var uid;
 
-    if (user !=  null ){
+    if (user != null) {
       uid = user.uid
     }
 
@@ -57,14 +62,16 @@ class Tasks extends React.Component {
       });
     });
   }
-
+  signOutUser() {
+    firebase.database().auth().signOut();
+  }
 
   addNewTodo() {
     const todoId = uuid();
     const user = firebase.auth().currentUser
     var uid;
 
-    if (user !=  null ){
+    if (user != null) {
       uid = user.uid
     }
     firebase.database().ref('/todos/' + uid).push({
@@ -72,12 +79,9 @@ class Tasks extends React.Component {
       todoItem: this.state.presentToDo,
       todoId: uid,
       userId: uid
-      
+
     });
-    Alert.alert('Action!', 'A new To-do item was created');
-    this.setState({
-      presentToDo: '',
-    });
+
   }
 
   clearTodos() {
@@ -88,38 +92,44 @@ class Tasks extends React.Component {
     let todosKeys = Object.keys(this.state.todos);
 
     return (
-     
-     
-          <View
-            style={styles.container}
-            contentContainerStyle={styles.contentContainerStyle}>
-            < View >
-              <SignOut />
-              <ScrollView>
-                {todosKeys.length > 0 ? (
-                  todosKeys.map(key => (
-                    <ToDoItem
-                      key={key}
-                      id={key}
-                      todoItem={this.state.todos[key]}
-                      bottomDivider
-                    />
-                  ))
-                ) : (
-                    <Text
-                      h2
-                      style={{ color: '#969595', margin: 20, fontSize: 15 }}>No todo item</Text>
-                  )}
-              </ScrollView>
-            </View >
-            <View style={{ marginTop: 10}}>
-            </View>
-            <KeyboardAvoidingView
+
+
+      <View
         style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : null}
-        style={{ flex: 1 }}
-      >
-           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        contentContainerStyle={styles.contentContainerStyle}>
+        < View >
+          <Header
+            backgroundColor='#272727'
+            // leftComponent={{ icon: 'menu', color: '#fff',  }}
+            centerComponent={{ text: 'TASKS', style: { color: '#fff' } }}
+            rightComponent={<SignOut />}
+          />
+
+          <ScrollView>
+            {todosKeys.length > 0 ? (
+              todosKeys.map(key => (
+                <ToDoItem
+                  key={key}
+                  id={key}
+                  todoItem={this.state.todos[key]}
+                  bottomDivider
+                />
+              ))
+            ) : (
+                <Text
+                  h2
+                  style={{ color: '#969595', margin: 20, fontSize: 15 }}>No todo item</Text>
+              )}
+          </ScrollView>
+        </View >
+        <View style={{ marginTop: 10 }}>
+        </View>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : null}
+          style={{ flex: 1 }}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View
               style={{
                 flex: 1, flexDirection: 'row', justifyContent: 'flex-start', width: '95 %'
@@ -131,8 +141,8 @@ class Tasks extends React.Component {
                 }}>
                 <Input
                   placeholder="New Task"
+                  color='white'
                   placeholderTextColor="#969595"
-                  
                   value={this.state.presentToDo}
                   style={{ fontSize: 20, color: 'white', marginRight: 50 }}
                   onChangeText={e => {
@@ -149,10 +159,11 @@ class Tasks extends React.Component {
                   size='45'
                   onPress={this.addNewTodo}
                 />
+
               </View>
             </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </View >
 
     );
@@ -175,7 +186,7 @@ const ToDoItem = ({ todoItem: { todoItem: name, done }, id }) => {
     const user = firebase.auth().currentUser
     var uid;
 
-    if (user !=  null ){
+    if (user != null) {
       uid = user.uid
     }
     const itemId = id
@@ -213,6 +224,9 @@ const ToDoItem = ({ todoItem: { todoItem: name, done }, id }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#272727',
+  },
+  header: {
     backgroundColor: '#272727',
   },
 

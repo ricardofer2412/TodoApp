@@ -1,12 +1,19 @@
 // Login.js
 import React from 'react'
-import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity, Image, StatusBar } from 'react-native'
 import * as firebase from 'firebase'
+import { Input } from 'react-native-elements';
+
 
 
 const uuid = require("uuid");
 
 export default class SignUp extends React.Component {
+
+
+  static navigationOptions = {
+    header: null
+  }
 
   state = {
     name: '',
@@ -19,18 +26,27 @@ export default class SignUp extends React.Component {
     const userId = uuid();
     firebase
       .auth()
-      .createUserWithEmailAndPassword(this.state.email, this.state.password,)
+      .createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then(userCredentials => {
         return userCredentials.user.updateProfile({
           displayName: this.state.name
         })
       })
-  
+
       .catch(error => this.setState * { errorMessage: error.message })
   };
   render() {
     return (
       <View style={styles.container}>
+        <StatusBar barStyle='light-content'></StatusBar>
+        <Image
+          source={require('../assets/bkg.png')}
+          style={{ marginTop: -280, marginLeft: -15, width: 500, height: 500 }}
+        ></Image>
+        <Image
+          source={require('../assets/authFooter.png')}
+          style={{ position: 'absolute', bottom: -575, right: -490 }}
+        ></Image>
         <Text style={styles.greeting}>{`Sign Up to Get Started`}</Text>
         <View style={styles.errorMessage}>
           {this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
@@ -39,7 +55,7 @@ export default class SignUp extends React.Component {
           <View>
             <Text style={styles.inputTitle}>Name</Text>
             <TextInput
-              style={styles.textInput}
+              style={styles.input}
               autoCapitalize="none"
               onChangeText={name => this.setState({ name })}
               value={this.state.name}
@@ -48,7 +64,7 @@ export default class SignUp extends React.Component {
           <View style={{ marginTop: 32 }}>
             <Text style={styles.inputTitle}>Email</Text>
             <TextInput
-              style={styles.textInput}
+              style={styles.input}
               autoCapitalize="none"
               onChangeText={email => this.setState({ email })}
               value={this.state.email}
@@ -58,7 +74,7 @@ export default class SignUp extends React.Component {
             <Text style={styles.inputTitle}>Password</Text>
             <TextInput
               secureTextEntry
-              style={styles.textInput}
+              style={styles.input}
               autoCapitalize="none"
               onChangeText={password => this.setState({ password })}
               value={this.state.password}
